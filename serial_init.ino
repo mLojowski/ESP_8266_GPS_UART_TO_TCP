@@ -21,25 +21,30 @@ void setup() {
     ets_delay_us(100);
 }
 
-
-void loop() {
-//char ch = 'q';
-while (true)
+void UARTS_Verification()
 {
-  while (Serial.available() > 0) {  //wait for data at hardware serial
-    ch=Serial.read();
-    swSer1.write(ch);     //send data recived from hardware serial to software serial
-    swSer2.write(ch);     //send data recived from hardware serial to software seriale
-  }
-  ch='q';
-  while (swSer1.available() > 0) {  //wait for data at software serial
-    Serial.write("1>");            //Send data recived from software serial to hardware serial
-    Serial.println((char)swSer1.read());    //Send data recived from software serial to hardware serial
-  }
-  ch='q';
-  while (swSer2.available() > 0) {  //wait for data at software serial
-    Serial.write("2>");             //Send data recived from software serial to hardware serial
-    Serial.println((char)swSer2.read());  //Send data recived from software serial to hardware serial
+  while (true)
+  {
+    while (Serial.available() > 0) {  //wait for data at hardware serial
+      ch=Serial.read();
+      swSer1.write(ch);     //send data recived from hardware serial to software serial
+      swSer2.write(ch);     //send data recived from hardware serial to software seriale
+    }
+    ch='q';
+    while (swSer1.available() > 0) {  //wait for data at software serial
+      Serial.write("1>");            //Send data recived from software serial to hardware serial
+      Serial.println((char)swSer1.read());    //Send data recived from software serial to hardware serial
+    }
+    ch='q';
+    while (swSer2.available() > 0) {  //wait for data at software serial
+      Serial.write("2>");             //Send data recived from software serial to hardware serial
+      Serial.println((char)swSer2.read());  //Send data recived from software serial to hardware serial
+    }
   }
 }
+
+void loop()
+{
+UARTS_Verification();
+
 }
