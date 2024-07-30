@@ -7,8 +7,6 @@ NMEA_0183 LIB -> https://github.com/ttlappalainen/NMEA0183
 ESP_telnet example -> https://github.com/esp8266/Arduino/issues/1169 (tcp info)
 
 
-INITIAL COMMIT: d89e6666d33c05f7785f6168dce31eb38ba97388
-
 SoftwareSerial configuration for pins 
 Ser1_RX_PIN 5
 Ser1_TX_PIN 4
