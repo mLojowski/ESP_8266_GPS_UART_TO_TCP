@@ -177,6 +177,52 @@ void setup(void) {
 }  //setup
 
 
+
+
+//  GetNMEA0183_Message
+// BLOCKING
+//-----------------------------------------------
+bool GetNMEA0183_Message(SoftwareSerial &swSer, char * buff) {
+  static unsigned int ReceivedChars = 0;
+  unsigned char Char = 0;
+
+  if (NULL == buff)
+  {
+    Serial.printf("ERROR - NULL PTR buffer");
+    return false;
+  }
+
+  while (swSer.available()) {
+    Char = swSer.read();
+
+    if (ReceivedChars == 0 && (Char == '\r')) return false;
+    if (ReceivedChars == 0 && (Char == '\n')) return false;
+
+    if ( (Char == '\n') || (Char == '\r') ) {
+      ReceivedChars = 0;
+      return true;
+    }
+
+    buff[ReceivedChars] = Char;
+    buff[ReceivedChars + 1] = 0;
+    ReceivedChars++;
+    if (ReceivedChars >= MAX_NMEA0183_MESSAGE_SIZE - 2) {
+      ReceivedChars = 0;
+      buff[0] = 0;
+      return false;
+    }
+  }
+  return false;
+}   //GetNMEA0183Message1
+
+
+
+
+
+
+
+// UARTS testprint, to be used in terms of uart verification
+//------------------------------------------------------------------
 void UARTS_Verification() {
   char ch = 'q';
   while (true) {
@@ -196,7 +242,9 @@ void UARTS_Verification() {
       Serial.println((char)swSer2.read());  //Send data recived from software serial to hardware serial
     }
   }
-}
+}   //UARTS_Verification
+
+
 
 
 void loop() {
@@ -213,13 +261,54 @@ void loop() {
       Serial.println("New Telnet client");
       serverClient.flush();  // clear input buffer, else you get strange characters 
     }
+
+
+  // FACKUP  - there is no TELNET client and YOU ARE WRITING  serverClient.println(buf1);
+  // PUT HERE :
+  //    serverClient.println(buf1);    // Send to clients
+  //  Serial.println(buf1);
+
+
+
   }
 
-    while(serverClient.available()) {  // get data from Client
-    Serial.write(serverClient.read());
+    // Do not need to read Yet
+    //while(serverClient.available()) {  // get data from Client
+    //Serial.write(serverClient.read());
+    //}
+
+  //bool GetNMEA0183_Message(SoftwareSerial &swSer, char * buff) {
+
+
+
+
+// FACKUP  - there is no TELNET client and YOU ARE WRITING  serverClient.println(buf1);
+// HERE - JUST SERIAL WRITE OF GetNMEA0183_Message(swSer1,buf1)
+
+  if (GetNMEA0183_Message(swSer1,buf1) == true) {    // Get NMEA sentences from serial#1
+    serverClient.println(buf1);    // Send to clients
+    Serial.println(buf1);
   }
 
 
-  delay(10);  // to avoid strange characters left in buffer
+  if (GetNMEA0183_Message(swSer2,buf1) == true) {    // Get NMEA sentences from serial#2
+    serverClient.println(buf1);    // Send to clients
+    Serial.println(buf1);
+  }
+
+
+/*
+  if (millis() - startTime > 2000) { // run every 2000 ms
+    startTime = millis();
+
+    if (serverClient && serverClient.connected()) {  // send data to Client
+      serverClient.print("Telnet Test, millis: ");
+      serverClient.println(millis());
+      serverClient.print("Free Heap RAM: ");
+      serverClient.println(ESP.getFreeHeap());
+    }
+  }
+*/
+  //delay(10);  // to avoid strange characters left in buffer WiFi
 
 }
