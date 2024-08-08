@@ -1,18 +1,5 @@
-/*
-#include <ESP8266WiFi.h>
-#include <SoftwareSerial.h>
-#include <Arduino.h>
-#include <time.h>
-*/
-#include "NMEA0183/NMEA0183.h"
-
-
+//#include "NMEA0183/NMEA0183.h"
 #include "MY_WiFi.h"
-
-
-
-//Rewrite to header:
-//#include "NMEA0183-WiFi-Multiplexer/NMEA083-WiFi-Multiplexer"
 
 //MACRO DEFNITIONS - UART's
 //----------------------------------------------
@@ -42,41 +29,23 @@ SoftwareSerial swSer2(Ser2_RX_PIN, Ser2_TX_PIN);
 
 //MACRO DEFNITIONS - NMEA0183
 //----------------------------------------------
-#define MAX_NMEA0183_MESSAGE_SIZE 150
+
+// NMEA interface input buffer definitions
 char buf1[MAX_NMEA0183_MESSAGE_SIZE] = "";  // Buffer for serial#1
 char buf2[MAX_NMEA0183_MESSAGE_SIZE] = "";  // Buffer for serial#2
 
 
-unsigned long startTime = millis();
 
-// provide text for the WiFi status
-const char *str_status[]= {
-  "WL_IDLE_STATUS",
-  "WL_NO_SSID_AVAIL",
-  "WL_SCAN_COMPLETED",
-  "WL_CONNECTED",
-  "WL_CONNECT_FAILED",
-  "WL_CONNECTION_LOST",
-  "WL_DISCONNECTED"
-};
-
-// provide text for the WiFi mode
-const char *str_mode[]= { "WIFI_OFF", "WIFI_STA", "WIFI_AP", "WIFI_AP_STA" };
-
-
-
-
-
-
-
-
-
-
+//MACRO DEFNITIONS - WiFi's
+//----------------------------------------------
 
 // declare telnet server (do NOT put in setup())
 WiFiServer telnetServer(23);
 WiFiClient serverClient;
 
+
+
+//unsigned long startTime = millis();
 
 // setup - configuration
 //-----------------------------------------------
@@ -95,15 +64,11 @@ void setup(void) {
   pinMode(Ser2_RX_PIN, INPUT);
   pinMode(Ser2_TX_PIN, OUTPUT);
   swSer2.enableIntTx(false);
-  swSer2.begin(Ser2_Baud);  //Initialize software serial with baudrate of 9600
+  swSer2.begin(Ser2_Baud);  //Initialize software serial with baudrate of 4800
 
 
   //INIT:
   Serial.println("\nESP8266 Software serial config started");
-
-
-
-
 
 
   //delay(1000);
@@ -143,47 +108,6 @@ void setup(void) {
   Serial.println(ESP.getFreeHeap());
 
 }  //setup
-
-
-
-
-//  GetNMEA0183_Message
-// BLOCKING
-//-----------------------------------------------
-bool GetNMEA0183_Message(SoftwareSerial &swSer, char * buff) {
-  static unsigned int ReceivedChars = 0;
-  unsigned char Char = 0;
-
-  if (NULL == buff)
-  {
-    Serial.printf("ERROR - NULL PTR buffer");
-    return false;
-  }
-
-  while (swSer.available()) {
-    Char = swSer.read();
-
-    if (ReceivedChars == 0 && (Char == '\r')) return false;
-    if (ReceivedChars == 0 && (Char == '\n')) return false;
-
-    if ( (Char == '\n') || (Char == '\r') ) {
-      ReceivedChars = 0;
-      return true;
-    }
-
-    buff[ReceivedChars] = Char;
-    buff[ReceivedChars + 1] = 0;
-    ReceivedChars++;
-    if (ReceivedChars >= MAX_NMEA0183_MESSAGE_SIZE - 2) {
-      ReceivedChars = 0;
-      buff[0] = 0;
-      return false;
-    }
-  }
-  return false;
-}   //GetNMEA0183Message1
-
-
 
 
 
@@ -255,30 +179,18 @@ void loop() {
 
   if (GetNMEA0183_Message(swSer1,buf1) == true) {    // Get NMEA sentences from serial#1
     serverClient.println(buf1);    // Send to clients
-    Serial.print("1> ");
+    Serial.print("Ser_1> ");
     Serial.println(buf1);
   }
 
 
   if (GetNMEA0183_Message(swSer2,buf1) == true) {    // Get NMEA sentences from serial#2
     serverClient.println(buf1);    // Send to clients
-    Serial.print("2> ");
+    Serial.print("Ser_2> ");
     Serial.println(buf1);
   }
 
 
-/*
-  if (millis() - startTime > 2000) { // run every 2000 ms
-    startTime = millis();
-
-    if (serverClient && serverClient.connected()) {  // send data to Client
-      serverClient.print("Telnet Test, millis: ");
-      serverClient.println(millis());
-      serverClient.print("Free Heap RAM: ");
-      serverClient.println(ESP.getFreeHeap());
-    }
-  }
-*/
   //delay(10);  // to avoid strange characters left in buffer WiFi
 
 }

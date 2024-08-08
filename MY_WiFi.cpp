@@ -36,3 +36,41 @@ void connectWifi() {
     Serial.println("Check for wrong typing!");
   }
 }  // connectWiFi()
+
+
+//  GetNMEA0183_Message
+// BLOCKING
+//-----------------------------------------------
+bool GetNMEA0183_Message(SoftwareSerial &swSer, char * buff) {
+  static unsigned int ReceivedChars = 0;
+  unsigned char Char = 0;
+
+  if (NULL == buff)
+  {
+    Serial.printf("ERROR - NULL PTR buffer");
+    return false;
+  }
+
+  while (swSer.available()) {
+    Char = swSer.read();
+
+    if (ReceivedChars == 0 && (Char == '\r')) return false;
+    if (ReceivedChars == 0 && (Char == '\n')) return false;
+
+    if ( (Char == '\n') || (Char == '\r') ) {
+      ReceivedChars = 0;
+      return true;
+    }
+
+    buff[ReceivedChars] = Char;
+    buff[ReceivedChars + 1] = 0;
+    ReceivedChars++;
+    if (ReceivedChars >= MAX_NMEA0183_MESSAGE_SIZE - 2) {
+      ReceivedChars = 0;
+      buff[0] = 0;
+      return false;
+    }
+  }
+  return false;
+}   //GetNMEA0183Message1
+
