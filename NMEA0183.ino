@@ -1,15 +1,15 @@
+/*
 #include <ESP8266WiFi.h>
 #include <SoftwareSerial.h>
 #include <Arduino.h>
 #include <time.h>
-
+*/
 #include "NMEA0183/NMEA0183.h"
 
 
-#include "WiFi_auth.h"
+#include "MY_WiFi.h"
 
 
-#include <ESP8266WiFi.h>
 
 //Rewrite to header:
 //#include "NMEA0183-WiFi-Multiplexer/NMEA083-WiFi-Multiplexer"
@@ -20,17 +20,19 @@
 #define DEBUG_Baud 115200
 
 // Ser1 = GPS_SERIAL
-#define Ser1_RX_PIN 5
-#define Ser1_TX_PIN 4
+#define Ser1_RX_PIN 4
+#define Ser1_TX_PIN 5
 #define Ser1_Baud 4800
 
 // Ser2 = GPS_SERIAL
-#define Ser2_RX_PIN 12
-#define Ser2_TX_PIN 13
+#define Ser2_RX_PIN 13
+#define Ser2_TX_PIN 12
+#define Ser2_Baud 4800
 
+// Ser3 ....
 //#define Ser2_RX_PIN 00
 //#define Ser2_TX_PIN 02
-#define Ser2_Baud 9600
+
 
 // Create software serial objects
 SoftwareSerial swSer1(Ser1_RX_PIN, Ser1_TX_PIN);
@@ -65,41 +67,7 @@ const char *str_mode[]= { "WIFI_OFF", "WIFI_STA", "WIFI_AP", "WIFI_AP_STA" };
 
 
 
-void connectWifi() {
-  Serial.print("Connecting as wifi client to SSID: ");
-  Serial.println(ssid);
 
-  // use in case of mode problem
-  WiFi.disconnect();
-  // switch to Station mode
-  if (WiFi.getMode() != WIFI_STA) {
-    WiFi.mode(WIFI_STA);
-  }
-
-  WiFi.begin ( ssid, password );
-
-  //if (debug ) WiFi.printDiag(Serial);
-
-  // ... Give ESP 10 seconds to connect to station.
-  unsigned long startTime = millis();
-  while (WiFi.status() != WL_CONNECTED && millis() - startTime < 10000) {
-    delay(500);
-    Serial.print(".");
-  }
-  Serial.println("");
-  // Check connection
-  if (WiFi.status() == WL_CONNECTED) {
-    Serial.print("WiFi connected; IP address: ");
-    Serial.println(WiFi.localIP());
-  } else {
-    Serial.print("WiFi connect failed to ssid: ");
-    Serial.println(ssid);
-    Serial.print("WiFi password <");
-    Serial.print(password);
-    Serial.println(">");
-    Serial.println("Check for wrong typing!");
-  }
-}  // connectWiFi()
 
 
 
@@ -287,12 +255,14 @@ void loop() {
 
   if (GetNMEA0183_Message(swSer1,buf1) == true) {    // Get NMEA sentences from serial#1
     serverClient.println(buf1);    // Send to clients
+    Serial.print("1> ");
     Serial.println(buf1);
   }
 
 
   if (GetNMEA0183_Message(swSer2,buf1) == true) {    // Get NMEA sentences from serial#2
     serverClient.println(buf1);    // Send to clients
+    Serial.print("2> ");
     Serial.println(buf1);
   }
 
