@@ -1,6 +1,6 @@
 [submodule "NMEA0183-WiFi-Multiplexer"]
 	path = NMEA0183-WiFi-Multiplexer
-	url = https://github.com/AK-Homberger/NMEA0183-WiFi-Multiplexer/tree/main
+	url = https://github.com/AK-Homberger/NMEA0183-WiFi-Multiplexer.git
 [submodule "NMEA0183"]
 	path = NMEA0183
 	url = https://github.com/ttlappalainen/NMEA0183.git

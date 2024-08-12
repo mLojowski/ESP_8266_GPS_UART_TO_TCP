@@ -1,3 +1,4 @@
+#include "IPAddress.h"
 #include "MY_WiFi.h"
 
 
@@ -7,6 +8,21 @@ void connectWifi(bool AP_MODE) {
   {
     Serial.println("Start WLAN AP");         // WiFi Mode AP
     WiFi.mode(WIFI_AP);
+    IPAddress Local_ip = {192,168,8,4};
+    IPAddress gateway = {192,168,8,1};
+    IPAddress subnet = {255,255,255,0};
+
+    //WiFi.softAPConfig(IPAddress local_ip, IPAddress gateway, IPAddress subnet);
+
+    if (WiFi.softAPConfig(Local_ip, gateway, subnet))
+    {
+      Serial.println("WiFi.softAPConfig TRUE");
+    }
+    else
+    {
+      Serial.println("WiFi.softAPConfig FALSE");
+    }
+
     WiFi.softAP(ssid, password);
     delay(100);
     IPAddress IP = WiFi.softAPIP();
