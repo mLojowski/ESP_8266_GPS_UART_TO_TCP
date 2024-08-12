@@ -42,7 +42,7 @@ char buf2[MAX_NMEA0183_MESSAGE_SIZE] = "";  // Buffer for serial#2
 // declare telnet server (do NOT put in setup())
 WiFiServer telnetServer(23);
 WiFiClient serverClient;
-
+#define AP_MODE true
 
 
 //unsigned long startTime = millis();
@@ -71,25 +71,17 @@ void setup(void) {
   Serial.println("\nESP8266 Software serial config started");
 
 
-  //delay(1000);
-  //Serial.begin(115200);
-  //delay(1000);
   Serial.println("Sync,Sync,Sync,Sync,Sync Wifi startup");
   delay(500);
   Serial.println();
-  // signal start
-  //pinMode(BUILTIN_LED2, OUTPUT);
-  //digitalWrite(BUILTIN_LED2, LOW);
-  //delay(100); // ms
-  //digitalWrite(BUILTIN_LED2, HIGH);
-  //delay(300); // ms
 
   Serial.print("Chip ID: 0x");
   Serial.println(ESP.getChipId(), HEX);
 
   Serial.println("Connect to Router requested");
-  connectWifi();
+  connectWifi(AP_MODE);
 
+  // IF WIFI IS IN AP MODE -> CHECK HERE
   if (WiFi.status() == WL_CONNECTED) {
     Serial.print("WiFi mode: ");
     Serial.println(str_mode[WiFi.getMode()]);

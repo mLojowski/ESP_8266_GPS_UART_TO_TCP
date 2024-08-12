@@ -25,7 +25,7 @@ static const char *str_status[]= {
 static const char *str_mode[]= { "WIFI_OFF", "WIFI_STA", "WIFI_AP", "WIFI_AP_STA" };
 
 // connectWiFi()
-void connectWifi();
+void connectWifi(bool);
 
 //  GetNMEA0183_Message
 // BLOCKING
