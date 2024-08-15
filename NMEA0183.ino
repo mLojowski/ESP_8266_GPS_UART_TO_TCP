@@ -80,15 +80,20 @@ void setup(void) {
   Serial.print("Chip ID: 0x");
   Serial.println(ESP.getChipId(), HEX);
 
-  Serial.println("Connect to Router requested");
   connectWifi(AP_MODE);
 
   // IF WIFI IS IN AP MODE -> CHECK HERE
-  if ((WiFi.status() == WL_CONNECTED)) {
+  if (AP_MODE || (WiFi.status() == WL_CONNECTED)) {
+  //if ((WiFi.getMode() == WIFI_AP) || (WiFi.status() == WL_CONNECTED)) {
+  
     Serial.print("WiFi mode: ");
     Serial.println(str_mode[WiFi.getMode()]);
     Serial.print ( "Status: " );
-    Serial.println (str_status[WiFi.status()]);
+    Serial.println (WiFi.status());
+
+    Serial.print (str_status[WiFi.status()]);
+    Serial.print ( " = " );
+    Serial.println (WiFi.status());
   } else {
     Serial.println("");
     Serial.println("WiFi connect failed, push RESET button.");

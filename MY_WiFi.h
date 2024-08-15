@@ -18,7 +18,8 @@ static const char *str_status[]= {
   "WL_CONNECTED",
   "WL_CONNECT_FAILED",
   "WL_CONNECTION_LOST",
-  "WL_DISCONNECTED"
+  "WL_DISCONNECTED",
+  "AP_MODE_STUB"
 };
 
 // provide text for the WiFi mode
