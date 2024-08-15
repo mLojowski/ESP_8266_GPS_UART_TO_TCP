@@ -32,8 +32,10 @@ SoftwareSerial swSer2(Ser2_RX_PIN, Ser2_TX_PIN);
 
 // NMEA interface input buffer definitions
 char buf1[MAX_NMEA0183_MESSAGE_SIZE] = "";  // Buffer for serial#1
-char buf2[MAX_NMEA0183_MESSAGE_SIZE] = "";  // Buffer for serial#2
+unsigned int ReceivedChars_1 = 0;
 
+char buf2[MAX_NMEA0183_MESSAGE_SIZE] = "";  // Buffer for serial#2
+unsigned int ReceivedChars_2 = 0;
 
 
 //MACRO DEFNITIONS - WiFi's
@@ -82,7 +84,7 @@ void setup(void) {
   connectWifi(AP_MODE);
 
   // IF WIFI IS IN AP MODE -> CHECK HERE
-  if (WiFi.status() == WL_CONNECTED) {
+  if ((WiFi.status() == WL_CONNECTED)) {
     Serial.print("WiFi mode: ");
     Serial.println(str_mode[WiFi.getMode()]);
     Serial.print ( "Status: " );
@@ -90,6 +92,8 @@ void setup(void) {
   } else {
     Serial.println("");
     Serial.println("WiFi connect failed, push RESET button.");
+    Serial.print ( "WiFi Status: " );
+    Serial.println( WiFi.status());
   }
 
   telnetServer.begin();
@@ -153,8 +157,14 @@ void loop() {
   //  Serial.println(buf1);
 
 
-
+/*
+    while(serverClient.available()) {  // get data from Client
+      Serial.println(serverClient.read());
+    }
+*/
   }
+  //delay(100);  //delay(10); //to avoid strange characters left in buffer WiFi
+
 
     // Do not need to read Yet
     //while(serverClient.available()) {  // get data from Client
@@ -169,19 +179,24 @@ void loop() {
 // FACKUP  - there is no TELNET client and YOU ARE WRITING  serverClient.println(buf1);
 // HERE - JUST SERIAL WRITE OF GetNMEA0183_Message(swSer1,buf1)
 
-  if (GetNMEA0183_Message(swSer1,buf1) == true) {    // Get NMEA sentences from serial#1
+  if (GetNMEA0183_Message(swSer1, buf1, ReceivedChars_1) == true) {    // Get NMEA sentences from serial#1
     serverClient.println(buf1);    // Send to clients
     Serial.print("Ser_1> ");
     Serial.println(buf1);
   }
 
 
-  if (GetNMEA0183_Message(swSer2,buf1) == true) {    // Get NMEA sentences from serial#2
-    serverClient.println(buf1);    // Send to clients
+  if (GetNMEA0183_Message(swSer2, buf2, ReceivedChars_2) == true) {    // Get NMEA sentences from serial#2
+    serverClient.println(buf2);    // Send to clients
     Serial.print("Ser_2> ");
-    Serial.println(buf1);
+    Serial.println(buf2);
   }
 
+  while(serverClient.available()) {  // get data from Client
+    //Serial.print("TCP> ");
+    Serial.print((char)serverClient.read());
+  }
+  //Serial.println("");
 
   //delay(10);  // to avoid strange characters left in buffer WiFi
 

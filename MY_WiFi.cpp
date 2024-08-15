@@ -4,9 +4,9 @@
 
 void connectWifi(bool AP_MODE) {
 
-  if (AP_MODE)
+  if (AP_MODE)                                   // WiFi AP Mode
   {
-    Serial.println("Start WLAN AP");         // WiFi Mode AP
+    Serial.println("Start WLAN AP");
     WiFi.mode(WIFI_AP);
     IPAddress Local_ip = {192,168,8,4};
     IPAddress gateway = {192,168,8,1};
@@ -30,7 +30,7 @@ void connectWifi(bool AP_MODE) {
     Serial.print("AP IP address: ");
     Serial.println(IP);
   }
-  else
+  else                                           // WiFi client Mode
   {
     Serial.print("Connecting as wifi client to SSID: ");
     Serial.println(ssid);
@@ -73,8 +73,8 @@ void connectWifi(bool AP_MODE) {
 //  GetNMEA0183_Message
 // BLOCKING
 //-----------------------------------------------
-bool GetNMEA0183_Message(SoftwareSerial &swSer, char * buff) {
-  static unsigned int ReceivedChars = 0;
+bool GetNMEA0183_Message(SoftwareSerial &swSer, char * buff, unsigned int &ReceivedChars) {
+  //static unsigned int ReceivedChars = 0;
   unsigned char Char = 0;
 
   if (NULL == buff)

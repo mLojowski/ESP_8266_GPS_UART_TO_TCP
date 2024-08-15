@@ -29,4 +29,4 @@ void connectWifi(bool);
 
 //  GetNMEA0183_Message
 // BLOCKING
-bool GetNMEA0183_Message(SoftwareSerial &swSer, char * buff);
+bool GetNMEA0183_Message(SoftwareSerial &swSer, char * buff, unsigned int &ReceivedChars);
